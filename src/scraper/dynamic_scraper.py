@@ -1,12 +1,16 @@
+#!/usr/bin/env python3
+
 import json
+from typing import List
+
 from bs4 import BeautifulSoup
 from unidecode import unidecode
 import requests
 
 import pandas as pd
 
-from urls import URLs_lonely_planet, URLs_imdb
-
+# from ..data.urls import URLs_lonely_planet, URLs_imdb
+from data.urls import URLs_lonely_planet, URLs_imdb
 
 class Scraper:
     """ Dynamic and static scraper for Lonely Planet and IMDb. """
@@ -117,3 +121,7 @@ class Scraper:
 
     def convert_scraped_results_to_dataframe(self, data: List[dict], file_name: str) -> pd.DataFrame:
         pass
+
+
+if __name__ == '__main__':
+    scraper = Scraper()
