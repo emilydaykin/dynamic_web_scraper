@@ -134,7 +134,8 @@ class Scraper:
                     title = soup.find_all('h1', class_='sc-b73cd867-0 cAMrQp')[0].text
                 else:
                     title = soup.find_all('h1', class_='sc-b73cd867-0 eKrKux')[0].text
-                years = soup.find_all('span', class_='sc-52284603-2 iTRONr')[0].text
+                # years = soup.find_all('span', class_='sc-52284603-2 iTRONr')[0].text
+                years = soup.find_all('span', class_='sc-8c396aa2-2 itZqyK')[0].text
                 poster = soup.find('img', class_='ipc-image')['src']
                 genres_elements = soup.find_all(
                     'a', class_='sc-16ede01-3 bYNgQ ipc-chip ipc-chip--on-baseAlt')
