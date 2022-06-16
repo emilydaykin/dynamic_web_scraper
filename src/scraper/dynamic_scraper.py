@@ -112,8 +112,65 @@ class Scraper:
 
             return cities_urls_to_scrape
 
+    def _extract_years(self, years):
+        years_split = years.split('–')
+        assert len(years_split) <= 2, '`Years` was not split correctly'
+        assert len(years_split) >0, '`Years` was not split correctly'
+        pilot_year = years_split[0]
+        finale_year = 'ongoing' if len(years_split) == 1 else years_split[1]
+        return pilot_year, finale_year
+
     def scrape_imdb(self, urls: List[str] = URLs_imdb) -> List[dict]:
-        pass
+        all_series = []
+
+        for index, url in enumerate(urls):
+            try:
+                print(f'{index + 1}/{len(urls)}: Scraping {url}...')
+                page = requests.get(url)
+                soup = BeautifulSoup(page.content, 'html.parser')
+
+                # separate class name in IMDb for super long titles:
+                if url == 'https://www.imdb.com/title/tt13315324/?ref_=nv_sr_srsg_0':
+                    title = soup.find_all('h1', class_='sc-b73cd867-0 cAMrQp')[0].text
+                else:
+                    title = soup.find_all('h1', class_='sc-b73cd867-0 eKrKux')[0].text
+                years = soup.find_all('span', class_='sc-52284603-2 iTRONr')[0].text
+                poster = soup.find('img', class_='ipc-image')['src']
+                genres_elements = soup.find_all(
+                    'a', class_='sc-16ede01-3 bYNgQ ipc-chip ipc-chip--on-baseAlt')
+                genres = [genre.text for genre in genres_elements]
+                description = soup.find_all('span', class_='sc-16ede01-1 kgphFu')[0].text
+                rating = soup.find_all('span', class_='sc-7ab21ed2-1 jGRxWM')[0].text
+                top_3_actor_elements = soup.find_all('a', class_='sc-11eed019-1 jFeBIw')[:3]
+                top_3_actors = [actor.text for actor in top_3_actor_elements]
+                number_of_episodes = soup.find_all('span', class_='ipc-title__subtext')[0].text
+                language = soup.find_all('a',
+                                         class_='ipc-metadata-list-item__list-content-item ipc-metadata-list-item__list-content-item--link')[
+                    -7].text
+
+                print(f'\t{title} scraped.')
+
+                pilot_year, finale_year = self._extract_years(years)
+
+                series_object = {
+                    'name': title,
+                    'genre': genres,
+                    'description': description,
+                    'actors': top_3_actors,
+                    'pilotYear': pilot_year,
+                    'finaleYear': finale_year,
+                    'rating': rating,
+                    'image': poster,
+                    'episodes': number_of_episodes,
+                    'language': language
+                }
+
+                all_series.append(series_object)
+
+                return all_series
+
+            except Exception as err:
+                print(f'Error "{err}" for the URL {url}')
 
     def convert_scraped_results_to_json_file(self, data: List[dict], file_name: str):
         with open(f"{file_name}.json", "w") as outfile:
