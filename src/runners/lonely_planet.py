@@ -10,4 +10,6 @@ from scraper.dynamic_scraper import Scraper
 
 
 scraper = Scraper()
-scraper.scrape_lonely_planet_cities()
+cities = scraper.scrape_lonely_planet_cities()
+# print(cities[0])
+
