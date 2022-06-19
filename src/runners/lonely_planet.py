@@ -7,8 +7,8 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(SCRIPT_DIR))
 
 from scraper.dynamic_scraper import Scraper
-from data.urls import cities_to_search
-from data.urls import keyword_to_search
+from data.destinations import cities_to_search
+from data.destinations import keyword_to_search
 
 # Instantiate scraper:
 scraper = Scraper()
