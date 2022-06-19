@@ -3,8 +3,9 @@ import pytest
 from scraper.dynamic_scraper import Scraper
 
 
-def test_dynamic_imdb_search():
+def test_static_imdb():
     scraper = Scraper()
 
-def test_dynamic_lonely_planet_search():
+
+def test_static_lonely_planet():
     scraper = Scraper()
