@@ -15,23 +15,25 @@ scraper = Scraper()
 
 # Get cities data from Lonely Planet:
 cities = scraper.scrape_lonely_planet_cities()
+print(cities)
 
 # Search for some cities and get results (url):
-search_results = []
-for city, country in cities_to_search.items():
-    print(f'searching {city} in {country}...')
-    results = scraper.scrape_lonely_planet_search(city, country)
-    search_results.append(results)
-
-print(search_results)
+# search_results = []
+# for city, country in cities_to_search.items():
+#     print(f'searching {city} in {country}...')
+#     results = scraper.scrape_lonely_planet_search(city, country)
+#     search_results.append(results)
+#
+# print(search_results)
 
 # Search keywords, filtering to country:
-keyword = next(iter(keyword_to_search.keys()))
-print(f"searching '{keyword}'...")
-keyword_results = scraper.scrape_lonely_planet_search(keyword, keyword_to_search[keyword])
-print(f'keyword_results: {keyword_results}')
-# Convert cities dictionary into dataframe:
+# keyword = next(iter(keyword_to_search.keys()))
+# print(f"searching '{keyword}'...")
+# keyword_results = scraper.scrape_lonely_planet_search(keyword, keyword_to_search[keyword])
+# print(f'keyword_results: {keyword_results}')
 
 # Export cities dictionary into json file:
+scraper.convert_scraped_results_to_json_file(cities, 'cities_EXPORT')
 
+# Convert cities dictionary into dataframe:
 
