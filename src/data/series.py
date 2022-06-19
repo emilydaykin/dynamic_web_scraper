@@ -1,5 +1,3 @@
-series_to_search = []
-
 URLs_imdb = [
     'https://www.imdb.com/title/tt2741602/?ref_=fn_al_tt_1',  # The Blacklist
     'https://www.imdb.com/title/tt1442437/?ref_=fn_al_tt_1',  # Modern Family
@@ -37,3 +35,5 @@ URLs_imdb = [
     'https://www.imdb.com/title/tt2085059/?ref_=nv_sr_srsg_0',  # Black Mirror
     'https://www.imdb.com/title/tt1358522/?ref_=fn_al_tt_1',  # White Collar
 ]
+
+series_to_search = ['game of thrones', 'jane the virgin', 'breaking bad']
