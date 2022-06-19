@@ -33,7 +33,10 @@ print(cities)
 # print(f'keyword_results: {keyword_results}')
 
 # Export cities dictionary into json file:
-scraper.convert_scraped_results_to_json_file(cities, 'cities_EXPORT')
+# scraper.convert_scraped_results_to_json_file(cities, 'cities_EXPORT')
+
+# Export cities dictionary into csv file:
+scraper.convert_scraped_results_to_csv_file(cities, 'cities_EXPORT_csv')
 
 # Convert cities dictionary into dataframe:
 

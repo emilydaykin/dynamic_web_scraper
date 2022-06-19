@@ -25,6 +25,9 @@ print(series)
 # print(urls_to_scrape)
 
 # Export series dictionary into json file:
-scraper.convert_scraped_results_to_json_file(series, 'series_EXPORT')
+# scraper.convert_scraped_results_to_json_file(series, 'series_EXPORT')
+
+# Export cities dictionary into csv file:
+scraper.convert_scraped_results_to_csv_file(series, 'series_EXPORT_csv')
 
 # Convert series dictionary into dataframe:
