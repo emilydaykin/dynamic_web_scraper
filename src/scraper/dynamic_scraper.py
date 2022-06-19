@@ -10,7 +10,7 @@ import requests
 import pandas as pd
 
 # from ..data.urls import URLs_lonely_planet, URLs_imdb
-from data.urls import URLs_lonely_planet, URLs_imdb
+from data.destinations import URLs_lonely_planet, URLs_imdb
 
 
 class Scraper:
@@ -173,6 +173,34 @@ class Scraper:
                 print(f'Error "{err}" for the URL {url}')
 
         return all_series
+
+    def scrape_imdb_search(search_term: str) -> List[str]:
+        """ Method that scrapes the results page of imdb to return the
+            titles matching a given search term.
+        """
+
+        search_term = unidecode(search_term.lower())
+
+        page = requests.get(
+            f"https://www.imdb.com/find?q={search_term.replace(' ', '+')}&ref_=nv_sr_sm")
+
+        soup = BeautifulSoup(page.content, 'html.parser')
+
+        imdb_search_results = soup.find_all('td', class_='result_text')
+
+        # Ignore Names, Keywords and Companies on results page. Get only Title:
+        series_search_results = [result for result in imdb_search_results if 'title' in result.a['href']]
+
+        if len(series_search_results) == 0:
+            return ['']
+        else:
+            series_urls_to_scrape = []
+            for result in series_search_results:
+                if search_term in result.a.text.lower():
+                    series_urls_to_scrape.append(
+                        f"https://www.imdb.com{result.a['href']}?ref_=fn_al_tt_1")
+
+            return series_urls_to_scrape
 
     def convert_scraped_results_to_json_file(self, data: List[dict], file_name: str):
         with open(f"{file_name}.json", "w") as outfile:
