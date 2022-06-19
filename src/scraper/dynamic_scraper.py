@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 
+import csv
 import json
+import pandas as pd
 from typing import List
 
 from bs4 import BeautifulSoup
 from unidecode import unidecode
 import requests
-
-import pandas as pd
 
 from data.destinations import URLs_lonely_planet
 from data.series import URLs_imdb
@@ -207,7 +207,15 @@ class Scraper:
             json.dump(data, outfile)
 
     def convert_scraped_results_to_dataframe(self, data: List[dict], file_name: str) -> pd.DataFrame:
-        pass
+        return pd.DataFrame(data)
+
+    def convert_scraped_results_to_csv_file(self, data: List[dict], file_name: str):
+        keys = data[0].keys()  # extract keys as csv header
+
+        with open(f"{file_name}.csv", 'w', newline='') as output_file:
+            dict_writer = csv.DictWriter(output_file, keys)
+            dict_writer.writeheader()
+            dict_writer.writerows(data)
 
 
 if __name__ == '__main__':
