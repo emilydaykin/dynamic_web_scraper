@@ -9,8 +9,8 @@ import requests
 
 import pandas as pd
 
-# from ..data.urls import URLs_lonely_planet, URLs_imdb
-from data.destinations import URLs_lonely_planet, URLs_imdb
+from data.destinations import URLs_lonely_planet
+from data.series import URLs_imdb
 
 
 class Scraper:
@@ -174,7 +174,7 @@ class Scraper:
 
         return all_series
 
-    def scrape_imdb_search(search_term: str) -> List[str]:
+    def scrape_imdb_search(self, search_term: str) -> List[str]:
         """ Method that scrapes the results page of imdb to return the
             titles matching a given search term.
         """
