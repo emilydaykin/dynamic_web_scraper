@@ -12,6 +12,7 @@ import pandas as pd
 # from ..data.urls import URLs_lonely_planet, URLs_imdb
 from data.urls import URLs_lonely_planet, URLs_imdb
 
+
 class Scraper:
     """ Dynamic and static scraper for Lonely Planet and IMDb. """
     # def __init__(self)
@@ -74,6 +75,7 @@ class Scraper:
             Args:
             -----
             city_name (str):
+            country_name (str):
         """
 
         city_name = unidecode(city_name.lower())
@@ -81,7 +83,7 @@ class Scraper:
 
         if requests.get(f'https://www.lonelyplanet.com/{country_name}/{city_name}').status_code == 200:
             city_url_to_scrape = f'https://www.lonelyplanet.com/{country_name}/{city_name}'
-            return [city_url_to_scrape]
+            return city_url_to_scrape
 
         # If city URL on lonely-planet isn't as straightforward, SEARCH the site:
 
@@ -96,20 +98,22 @@ class Scraper:
         soup = BeautifulSoup(page.content, 'html.parser')
 
         search_results = soup.find_all(
-            'a', class_='jsx-1866906973 ListItemTitleLink')
+            # 'a', class_='jsx-1866906973 ListItemTitleLink')  # april 2022
+            'a', class_='text-sm md:text-xl font-semibold text-link line-clamp-1')  # june 2022
         if len(search_results) == 0:
             return ''
         else:
             cities_urls_to_scrape = []
             for result in search_results:
                 # without this extra if, returns all search results that match just the city
-                if (unidecode(result['href'].split('/')[0]) == country_name):
+                if unidecode(result['href'].split('/')[0]) == country_name:
                     cities_urls_to_scrape.append(
                         f"https://www.lonelyplanet.com/{result['href']}")
 
             return cities_urls_to_scrape
 
-    def _extract_years(self, years):
+    @staticmethod
+    def _extract_years(years) -> object:
         years_split = years.split('–')
         assert len(years_split) <= 2, '`Years` was not split correctly'
         assert len(years_split) >0, '`Years` was not split correctly'
@@ -131,8 +135,8 @@ class Scraper:
                     title = soup.find_all('h1', class_='sc-b73cd867-0 cAMrQp')[0].text
                 else:
                     title = soup.find_all('h1', class_='sc-b73cd867-0 eKrKux')[0].text
-                # years = soup.find_all('span', class_='sc-52284603-2 iTRONr')[0].text
-                years = soup.find_all('span', class_='sc-8c396aa2-2 itZqyK')[0].text
+                # years = soup.find_all('span', class_='sc-52284603-2 iTRONr')[0].text  # april 2022
+                years = soup.find_all('span', class_='sc-8c396aa2-2 itZqyK')[0].text  # june 2022
                 poster = soup.find('img', class_='ipc-image')['src']
                 genres_elements = soup.find_all(
                     'a', class_='sc-16ede01-3 bYNgQ ipc-chip ipc-chip--on-baseAlt')
@@ -169,7 +173,6 @@ class Scraper:
                 print(f'Error "{err}" for the URL {url}')
 
         return all_series
-
 
     def convert_scraped_results_to_json_file(self, data: List[dict], file_name: str):
         with open(f"{file_name}.json", "w") as outfile:
