@@ -206,7 +206,7 @@ class Scraper:
         with open(f"{file_name}.json", "w") as outfile:
             json.dump(data, outfile)
 
-    def convert_scraped_results_to_dataframe(self, data: List[dict], file_name: str) -> pd.DataFrame:
+    def convert_scraped_results_to_dataframe(self, data: List[dict]) -> pd.DataFrame:
         return pd.DataFrame(data)
 
     def convert_scraped_results_to_csv_file(self, data: List[dict], file_name: str):
