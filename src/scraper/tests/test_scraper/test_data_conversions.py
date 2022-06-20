@@ -46,14 +46,29 @@ def test_convert_to_json(mock_scraped_data):
     content = file.read()
     assert all(keywords in content for keywords in [
         'Bali', 'Nigeria', 'continent', 'Great Pyramid of Khufu', 'description', 'https://lp-cms-production.imgix',
-        'Cairo is magnificent, beautiful and, at time, infuriating.', 'fit=crop&fm=auto&h=800',
+        'Cairo is magnificent, beautiful and, at time, infuriating.', 'fit=crop&fm=auto&h=800"}]',
         'you\'ll have no choice but to jump right in', ', "top_3_attractions": ['
     ])
     os.remove('test_json_export.json')
 
 
-def test_convert_to_csv():
-    pass
+def test_convert_to_csv(mock_scraped_data):
+    scraper = Scraper()
+    assert not any(['csv' in filename for filename in os.listdir()])
+    scraper.convert_scraped_results_to_csv_file(mock_scraped_data, 'test_csv_export')
+    assert 'test_csv_export.csv' in os.listdir()
+    file = open('test_csv_export.csv', 'r')
+    content = file.read()
+    assert all(keywords in content for keywords in [
+        'city,country,state,co', '\nBali,Indonesia,,Asia,', 'Cairo', 'Lagos', '"[\'Pyramids of Giza\',',
+        'joshua-oluwagbemiga-if1IPTI_iYc-lagos%2520nigeria.jpg', '9cc61fb6fdfacaffb42cf1.jpg?sharp=10&vib=20&w=1200',
+        'Africa,"The economic and cultural powerhouse of the country thanks to an influx of oil money',
+        'a tropical state of mind.","[\'Bany', ', \'Nike Art Gallery\', \'Terra'
+    ])
+    assert not any(symbol in content for symbol in ['{', '}'])
+    os.remove('test_csv_export.csv')
+
+
 
 def test_convert_to_dataframe(mock_scraped_data):
     scraper = Scraper()
