@@ -12,10 +12,19 @@ def mock_series_urls():
         'https://www.imdb.com/title/tt8420184/?ref_=fn_al_tt_1'  # The Last Dance
     ]
 
+@pytest.fixture
+def mock_destinations_urls():
+    return [
+        'https://www.lonelyplanet.com/indonesia/nusa-tenggara/gili-islands',
+        'https://www.lonelyplanet.com/nigeria/lagos',
+        'https://www.lonelyplanet.com/greece/cyclades/mykonos',
+        'https://www.lonelyplanet.com/egypt/cairo'
+    ]
+
 
 def test_static_imdb(mock_series_urls):
     scraper = Scraper()
-    series = scraper.scrape_imdb(mock_series_urls)
+    series = scraper.scrape_imdb_series(mock_series_urls)
     assert type(series) == list
     assert len(series) == 3
     series_titles = []
@@ -58,5 +67,21 @@ def test_imdb_year_split():
     assert finale_year == '', "Series second year from split should be an empty string."
 
 
-def test_static_lonely_planet():
-    pass
+def test_static_lonely_planet(mock_destinations_urls):
+    scraper = Scraper()
+    destinations = scraper.scrape_lonely_planet_cities(mock_destinations_urls)
+    assert type(destinations) == list
+    assert len(destinations) == 4
+
+    city_names = []
+    for destination in destinations:
+        assert all(key in destination.keys() for key in [
+            'city', 'country', 'state', 'continent', 'description', 'top_3_attractions'
+        ]), 'Key(s) missing.'
+        city_names.append(destination['city'])
+        for key in ['city', 'country', 'state', 'continent', 'description']:
+            assert type(destination[key]) == str, f'Destination {key} is not a string.'
+        assert type(destination['top_3_attractions']) == list, 'Destination attractions not a list.'
+    assert all(place in city_names for place in [
+        'Gili Islands', 'Lagos', 'Mykonos', 'Cairo'
+    ]), 'Not all destinations successfully scraped.'
