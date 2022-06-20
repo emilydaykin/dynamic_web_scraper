@@ -121,7 +121,7 @@ class Scraper:
         finale_year = 'ongoing' if len(years_split) == 1 else years_split[1]
         return pilot_year, finale_year
 
-    def scrape_imdb(self, urls: List[str] = URLs_imdb) -> List[dict]:
+    def scrape_imdb_series(self, urls: List[str] = URLs_imdb) -> List[dict]:
         all_series = []
 
         for index, url in enumerate(urls):
