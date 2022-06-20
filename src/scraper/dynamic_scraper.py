@@ -15,7 +15,8 @@ from data.series import URLs_imdb
 
 class Scraper:
     """ Dynamic and static scraper for Lonely Planet and IMDb. """
-    # def __init__(self)
+    def __init__(self):
+        self.series_urls_to_scrape = []
 
     def scrape_lonely_planet_cities(self, urls: List[str] = URLs_lonely_planet) -> List[dict]:
         cities = []
@@ -139,7 +140,10 @@ class Scraper:
                 genres = [genre.text for genre in genres_elements]
                 description = soup.find_all('span', class_='sc-16ede01-1 kgphFu')[0].text
                 rating = soup.find_all('span', class_='sc-7ab21ed2-1 jGRxWM')[0].text
-                top_3_actor_elements = soup.find_all('a', class_='sc-11eed019-1 jFeBIw')[:3]
+                # top_3_actor_elements = soup.find_all('a', class_='sc-11eed019-1 jFeBIw')[:3]  # april 2022
+                top_3_actor_elements = soup.find_all('a',
+                                                     class_='ipc-metadata-list-item__list-content-item ipc-metadata-list-item__list-content-item--link')[
+                                       :3]  # june 2022
                 top_3_actors = [actor.text for actor in top_3_actor_elements]
                 number_of_episodes = soup.find_all('span', class_='ipc-title__subtext')[0].text
                 language = soup.find_all('a',
@@ -190,13 +194,13 @@ class Scraper:
         if len(series_search_results) == 0:
             return ['']
         else:
-            series_urls_to_scrape = []
+            self.series_urls_to_scrape = []
             for result in series_search_results:
                 if search_term in result.a.text.lower():
-                    series_urls_to_scrape.append(
+                    self.series_urls_to_scrape.append(
                         f"https://www.imdb.com{result.a['href']}?ref_=fn_al_tt_1")
 
-            return series_urls_to_scrape
+            return self.series_urls_to_scrape
 
     def convert_scraped_results_to_json_file(self, data: List[dict], file_name: str):
         with open(f"{file_name}.json", "w") as outfile:
