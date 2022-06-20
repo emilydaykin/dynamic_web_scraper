@@ -130,11 +130,7 @@ class Scraper:
                 page = requests.get(url)
                 soup = BeautifulSoup(page.content, 'html.parser')
 
-                # separate class name in IMDb for super long titles:
-                if url == 'https://www.imdb.com/title/tt13315324/?ref_=nv_sr_srsg_0':
-                    title = soup.find_all('h1', class_='sc-b73cd867-0 cAMrQp')[0].text
-                else:
-                    title = soup.find_all('h1', class_='sc-b73cd867-0 eKrKux')[0].text
+                title = soup.find_all('h1', {'data-testid': 'hero-title-block__title'})[0].text
                 # years = soup.find_all('span', class_='sc-52284603-2 iTRONr')[0].text  # april 2022
                 years = soup.find_all('span', class_='sc-8c396aa2-2 itZqyK')[0].text  # june 2022
                 poster = soup.find('img', class_='ipc-image')['src']
