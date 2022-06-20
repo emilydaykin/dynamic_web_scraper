@@ -1,5 +1,6 @@
 import pytest
 import pandas as pd
+import os
 
 from scraper.dynamic_scraper import Scraper
 
@@ -36,8 +37,20 @@ def mock_scraped_data():
                      'dfacaffb42cf1.jpg?sharp=10&vib=20&w=1200&auto=compress&fit=crop&fm=auto&h=800'
         }]
 
-def test_convert_to_json():
-    pass
+def test_convert_to_json(mock_scraped_data):
+    scraper = Scraper()
+    assert not any(['json' in filename for filename in os.listdir()])
+    scraper.convert_scraped_results_to_json_file(mock_scraped_data, 'test_json_export')
+    assert 'test_json_export.json' in os.listdir()
+    file = open('test_json_export.json', 'r')
+    content = file.read()
+    assert all(keywords in content for keywords in [
+        'Bali', 'Nigeria', 'continent', 'Great Pyramid of Khufu', 'description', 'https://lp-cms-production.imgix',
+        'Cairo is magnificent, beautiful and, at time, infuriating.', 'fit=crop&fm=auto&h=800',
+        'you\'ll have no choice but to jump right in', ', "top_3_attractions": ['
+    ])
+    os.remove('test_json_export.json')
+
 
 def test_convert_to_csv():
     pass
