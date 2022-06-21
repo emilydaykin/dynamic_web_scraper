@@ -22,7 +22,12 @@ class Scraper:
         self.cities_urls_to_scrape = []
 
     def scrape_lonely_planet_cities(self, urls: List[str] = URLs_lonely_planet) -> List[dict]:
+        """ Method that statically scrapes a given list of Lonely Planet pages for
+            destination name, country, state, continent, description, top attractions
+            and an image URL.
 
+            Returns a list of dictionaries per destination URL.
+        """
         for index, city_url in enumerate(urls):
             try:
                 # Parse page
@@ -74,13 +79,11 @@ class Scraper:
         return self.all_cities_scraped
 
     def scrape_lonely_planet_search(self, city_name: str, country_name: str) -> List[str]:
-        """ This function takes POST `/scrape/search/` data when a new 
-            destination is searched, and returns a valid Lonely Planet URL.
+        """ Method that dynamically scrapes the search results page of Lonely Planet
+            given a search term. The results are then matched to the country_name
+            arg to narrow down to the relevant search results
 
-            Args:
-            -----
-            city_name (str):
-            country_name (str):
+            Returns a list of Lonely Planet URLs corresponding to the relevant search results.
         """
 
         city_name = unidecode(city_name.lower())
@@ -119,6 +122,7 @@ class Scraper:
 
     @staticmethod
     def _extract_years(years) -> object:
+        """ Helper function to extract pilot and finale years from IMDB show. """
         years_split = years.split('–')
         assert len(years_split) <= 2, '`Years` was not split correctly'
         assert len(years_split) > 0, '`Years` was not split correctly'
@@ -127,7 +131,12 @@ class Scraper:
         return pilot_year, finale_year
 
     def scrape_imdb_series(self, urls: List[str] = URLs_imdb) -> List[dict]:
+        """ Method that statically scrapes a given list of IMDB pages for TV series
+            title, genres, plot, actors, pilot and finale year, average rating, image
+            URL, number of episodes and language of the show.
 
+            Returns a list of dictionaries per show URL.
+        """
         for index, url in enumerate(urls):
             try:
                 print(f'{index + 1}/{len(urls)}: Scraping {url}...')
@@ -177,17 +186,19 @@ class Scraper:
         return self.all_series_scraped
 
     def scrape_imdb_search(self, search_term: str) -> List[str]:
-        """ Method that scrapes the results page of imdb to return the
-            titles matching a given search term.
+        """ Method that dynamically scrapes the search results page of IMDb
+            given a search term. The results are then filtered to only 'titles'
+            (ignoring results of 'names', 'keywords' or 'companies' on IMDb)
+            to narrow down to the relevant search results.
+
+            Returns a list of IMDb URLs corresponding to the relevant search results.
         """
 
         search_term = unidecode(search_term.lower())
 
         page = requests.get(
             f"https://www.imdb.com/find?q={search_term.replace(' ', '+')}&ref_=nv_sr_sm")
-
         soup = BeautifulSoup(page.content, 'html.parser')
-
         imdb_search_results = soup.find_all('td', class_='result_text')
 
         # Ignore Names, Keywords and Companies on results page. Get only Title:
@@ -205,6 +216,7 @@ class Scraper:
 
     @staticmethod
     def _convert_scraped_results_to_json_file(data: List[dict], file_name: str):
+        """ Exports a given list of dictionary data into a JSON file. """
         if type(data) == list and len(data) >= 1 and type(data[0]) == dict \
                 and len(data[0].keys()) >= 7:
             with open(f"{file_name}.json", "w") as outfile:
@@ -214,6 +226,7 @@ class Scraper:
 
     @staticmethod
     def _convert_scraped_results_to_dataframe(data: List[dict]) -> pd.DataFrame:
+        """ Converts a given list of dictionary data into a pandas dataframe. """
         if type(data) == list and len(data) >= 1 and type(data[0]) == dict \
                 and len(data[0].keys()) >= 7:
             return pd.DataFrame(data)
@@ -222,6 +235,7 @@ class Scraper:
 
     @staticmethod
     def _convert_scraped_results_to_csv_file(data: List[dict], file_name: str):
+        """ Exports a given list of dictionary data into a CSV file. """
         if type(data) == list and len(data) >= 1 and type(data[0]) == dict \
                 and len(data[0].keys()) >= 7:
             keys = data[0].keys()  # extract keys as csv header
