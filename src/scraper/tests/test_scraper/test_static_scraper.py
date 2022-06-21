@@ -62,7 +62,7 @@ def test_static_imdb(mock_series_urls):
             assert show[key].isnumeric(), f'Series {key} not a number.'
         assert (show['finaleYear'].isnumeric() or type(show['finaleYear']) == str), \
             'Series finale year is not the right type.'
-        assert bool(re.match(r'^-?\d+(?:\.\d+)$', show['rating'])), 'Series rating is not a float.'
+        assert bool(re.match(r'^-?\d+\.\d+$', show['rating'])), 'Series rating is not a float.'
 
     assert 'Brooklyn Nine-Nine' in series_titles, 'Brooklyn Nine-Nine not scraped.'
     assert any('Suits' in show_title for show_title in series_titles), 'Suites not scraped.'

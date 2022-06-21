@@ -33,4 +33,3 @@ URLs_lonely_planet = [
 
 cities_to_search = {'vancouver': 'canada', 'tokyo': 'japan', 'nerja': 'spain', 'panama city': 'panama'}
 keyword_to_search = {'ko': 'thailand'}
-

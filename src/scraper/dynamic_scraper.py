@@ -16,10 +16,13 @@ from data.series import URLs_imdb
 class Scraper:
     """ Dynamic and static scraper for Lonely Planet and IMDb. """
     def __init__(self):
+        self.all_cities_scraped = []
+        self.all_series_scraped = []
         self.series_urls_to_scrape = []
+        self.cities_urls_to_scrape = []
 
     def scrape_lonely_planet_cities(self, urls: List[str] = URLs_lonely_planet) -> List[dict]:
-        cities = []
+
         for index, city_url in enumerate(urls):
             try:
                 # Parse page
@@ -29,7 +32,8 @@ class Scraper:
 
                 # City
                 city = soup.find_all(
-                    'h1', class_='text-3xl font-display md:text-6xl leading-tighter font-semibold font-bold text-blue mb-6 lg:mb-8')[0].text
+                    'h1', class_='text-3xl font-display md:text-6xl leading-tighter font-semibold font-bold text-blue '
+                                 'mb-6 lg:mb-8')[0].text
 
                 # Continent & Country:
                 location = soup.find_all(
@@ -62,12 +66,12 @@ class Scraper:
                     'image': image
                 }
 
-                cities.append(fields)
+                self.all_cities_scraped.append(fields)
 
             except Exception as err:
                 print(f'Error "{err}" for the URL {city_url}')
 
-        return cities
+        return self.all_cities_scraped
 
     def scrape_lonely_planet_search(self, city_name: str, country_name: str) -> List[str]:
         """ This function takes POST `/scrape/search/` data when a new 
@@ -84,13 +88,14 @@ class Scraper:
 
         if requests.get(f'https://www.lonelyplanet.com/{country_name}/{city_name}').status_code == 200:
             city_url_to_scrape = f'https://www.lonelyplanet.com/{country_name}/{city_name}'
-            return city_url_to_scrape
+            return [city_url_to_scrape]
 
         # If city URL on lonely-planet isn't as straightforward, SEARCH the site:
 
         # Bypassing Response [403] with headers:
         header = {
-            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36",
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
+                          'Chrome/74.0.3729.169 Safari/537.36',
             'referer': 'https://www.google.com/'
         }
 
@@ -104,26 +109,24 @@ class Scraper:
         if len(search_results) == 0:
             return ['']
         else:
-            cities_urls_to_scrape = []
             for result in search_results:
                 # without this extra if, returns all search results that match just the city
                 if unidecode(result['href'].split('/')[0]) == country_name:
-                    cities_urls_to_scrape.append(
+                    self.cities_urls_to_scrape.append(
                         f"https://www.lonelyplanet.com/{result['href']}")
 
-            return cities_urls_to_scrape
+            return self.cities_urls_to_scrape
 
     @staticmethod
     def _extract_years(years) -> object:
         years_split = years.split('–')
         assert len(years_split) <= 2, '`Years` was not split correctly'
-        assert len(years_split) >0, '`Years` was not split correctly'
+        assert len(years_split) > 0, '`Years` was not split correctly'
         pilot_year = years_split[0]
         finale_year = 'ongoing' if len(years_split) == 1 else years_split[1]
         return pilot_year, finale_year
 
     def scrape_imdb_series(self, urls: List[str] = URLs_imdb) -> List[dict]:
-        all_series = []
 
         for index, url in enumerate(urls):
             try:
@@ -141,14 +144,13 @@ class Scraper:
                 description = soup.find_all('span', class_='sc-16ede01-1 kgphFu')[0].text
                 rating = soup.find_all('span', class_='sc-7ab21ed2-1 jGRxWM')[0].text
                 # top_3_actor_elements = soup.find_all('a', class_='sc-11eed019-1 jFeBIw')[:3]  # april 2022
-                top_3_actor_elements = soup.find_all('a',
-                                                     class_='ipc-metadata-list-item__list-content-item ipc-metadata-list-item__list-content-item--link')[
-                                       :3]  # june 2022
+                top_3_actor_elements = soup.find_all('a', class_='ipc-metadata-list-item__list-content-item ipc-'
+                                                                 'metadata-list-item__list-content-item'
+                                                                 '--link')[:3]  # june 2022
                 top_3_actors = [actor.text for actor in top_3_actor_elements]
                 number_of_episodes = soup.find_all('span', class_='ipc-title__subtext')[0].text
-                language = soup.find_all('a',
-                                         class_='ipc-metadata-list-item__list-content-item ipc-metadata-list-item__list-content-item--link')[
-                    -7].text
+                language = soup.find_all('a', class_='ipc-metadata-list-item__list-content-item '
+                                                     'ipc-metadata-list-item__list-content-item--link')[-7].text
 
                 print(f'------- {title} scraped.')
 
@@ -167,12 +169,12 @@ class Scraper:
                     'language': language
                 }
 
-                all_series.append(series_object)
+                self.all_series_scraped.append(series_object)
 
             except Exception as err:
                 print(f'Error "{err}" for the URL {url}')
 
-        return all_series
+        return self.all_series_scraped
 
     def scrape_imdb_search(self, search_term: str) -> List[str]:
         """ Method that scrapes the results page of imdb to return the
@@ -194,7 +196,6 @@ class Scraper:
         if len(series_search_results) == 0:
             return ['']
         else:
-            self.series_urls_to_scrape = []
             for result in series_search_results:
                 if search_term in result.a.text.lower():
                     self.series_urls_to_scrape.append(

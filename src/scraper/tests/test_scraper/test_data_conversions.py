@@ -4,6 +4,7 @@ import os
 
 from scraper.dynamic_scraper import Scraper
 
+
 @pytest.fixture
 def mock_invalid_data():
     return [[{'name': 'jurassic'}], [], {'actors': ['foo', 'bar']}, {}, [{}], 'hello world', ['testing']]
@@ -77,7 +78,8 @@ def test_convert_to_csv(mock_scraped_data):
 def test_convert_to_dataframe(mock_scraped_data):
     scraper = Scraper()
     df = scraper._convert_scraped_results_to_dataframe(mock_scraped_data)
-    assert type(df) == pd.core.frame.DataFrame
+    # assert type(df) == pd.core.frame.DataFrame
+    assert type(df) == pd.DataFrame
     assert df.shape == (3, 7), 'Dataframe should have 3 rows and 7 columns.'
     assert all(col in df.columns for col in [
         'city', 'country', 'state', 'continent', 'description', 'top_3_attractions', 'image'

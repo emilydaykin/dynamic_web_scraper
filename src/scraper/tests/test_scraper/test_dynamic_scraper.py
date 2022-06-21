@@ -78,4 +78,3 @@ def test_lonely_planet_invalid_search(invalid_search_term):
         assert results[0] == ''
     except Exception as err:
         raise pytest.fail(f'DID RAISE {err}')
-
