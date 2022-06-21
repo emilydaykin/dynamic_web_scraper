@@ -41,6 +41,7 @@ def mock_scraped_data():
                      'dfacaffb42cf1.jpg?sharp=10&vib=20&w=1200&auto=compress&fit=crop&fm=auto&h=800'
         }]
 
+
 def test_convert_to_json(mock_scraped_data):
     scraper = Scraper()
     assert not any(['json' in filename for filename in os.listdir()])
@@ -73,7 +74,6 @@ def test_convert_to_csv(mock_scraped_data):
     os.remove('test_csv_export.csv')
 
 
-
 def test_convert_to_dataframe(mock_scraped_data):
     scraper = Scraper()
     df = scraper._convert_scraped_results_to_dataframe(mock_scraped_data)
@@ -84,8 +84,15 @@ def test_convert_to_dataframe(mock_scraped_data):
     ]), 'Dataframe has missing columns.'
 
 
-def test_invalid_conversion_to_dataframe(mock_invalid_data):
+def test_invalid_data_conversions(mock_invalid_data):
     scraper = Scraper()
+
     for data in mock_invalid_data:
         with pytest.raises(TypeError, match=r'Data must be a valid list of dictionaries.'):
             scraper._convert_scraped_results_to_dataframe(data)
+
+        with pytest.raises(TypeError, match=r'Data must be a valid list of dictionaries.'):
+            scraper._convert_scraped_results_to_json_file(data, 'testing_json_export')
+
+        with pytest.raises(TypeError, match=r'Data must be a valid list of dictionaries.'):
+            scraper._convert_scraped_results_to_csv_file(data, 'testing_csv_export')
