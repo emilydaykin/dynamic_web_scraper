@@ -7,9 +7,15 @@ from scraper.dynamic_scraper import Scraper
 def mock_imdb_search_term():
     return 'game of thrones'
 
+
 @pytest.fixture
 def mock_lonely_planet_search_term():
     return ['ko', 'thailand']
+
+
+@pytest.fixture
+def invalid_search_term():
+    return 'sh673j^$7djr3ksof'
 
 
 def test_dynamic_imdb_search(mock_imdb_search_term):
@@ -31,6 +37,17 @@ def test_dynamic_imdb_search(mock_imdb_search_term):
     assert int(scraped_series_page[0]['pilotYear']) == 2011
 
 
+def test_imdb_invalid_search(invalid_search_term):
+    scraper = Scraper()
+    try:
+        results = scraper.scrape_imdb_search(invalid_search_term)
+        assert type(results) == list
+        assert len(results) == 1
+        assert results[0] == ''
+    except Exception as err:
+        raise pytest.fail(f'DID RAISE {err}')
+
+
 def test_dynamic_lonely_planet_search(mock_lonely_planet_search_term):
     scraper = Scraper()
     results = scraper.scrape_lonely_planet_search(*mock_lonely_planet_search_term)
@@ -50,3 +67,15 @@ def test_dynamic_lonely_planet_search(mock_lonely_planet_search_term):
     assert scraped_island_page[0]['continent'] == 'Asia', 'Continent should be Asia.'
     for image_url_component in ['https://lp-cms-production.imgix.net', '.jpg', '&auto=compress&fit=crop']:
         assert image_url_component in scraped_island_page[0]['image'], 'Not a valid image url.'
+
+
+def test_lonely_planet_invalid_search(invalid_search_term):
+    scraper = Scraper()
+    try:
+        results = scraper.scrape_lonely_planet_search(invalid_search_term, '')
+        assert type(results) == list
+        assert len(results) == 1
+        assert results[0] == ''
+    except Exception as err:
+        raise pytest.fail(f'DID RAISE {err}')
+

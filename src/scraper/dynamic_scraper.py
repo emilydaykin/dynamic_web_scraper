@@ -102,7 +102,7 @@ class Scraper:
             # 'a', class_='jsx-1866906973 ListItemTitleLink')  # april 2022
             'a', class_='text-sm md:text-xl font-semibold text-link line-clamp-1')  # june 2022
         if len(search_results) == 0:
-            return ''
+            return ['']
         else:
             cities_urls_to_scrape = []
             for result in search_results:
