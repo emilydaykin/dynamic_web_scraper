@@ -14,7 +14,9 @@ from data.series import URLs_imdb
 
 
 class Scraper:
-    """ Dynamic and static scraper for Lonely Planet and IMDb. """
+    """ Dynamic and static scraper for Lonely Planet and IMDb, as well as static
+        methods to convert or export scraped data into a readable/usable format.
+    """
     def __init__(self):
         self.all_cities_scraped = []
         self.all_series_scraped = []
