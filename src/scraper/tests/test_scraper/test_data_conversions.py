@@ -4,6 +4,10 @@ import os
 
 from scraper.dynamic_scraper import Scraper
 
+@pytest.fixture
+def mock_invalid_data():
+    return [[{'name': 'jurassic'}], [], {'actors': ['foo', 'bar']}, {}, [{}], 'hello world', ['testing']]
+
 
 @pytest.fixture
 def mock_scraped_data():
@@ -40,7 +44,7 @@ def mock_scraped_data():
 def test_convert_to_json(mock_scraped_data):
     scraper = Scraper()
     assert not any(['json' in filename for filename in os.listdir()])
-    scraper.convert_scraped_results_to_json_file(mock_scraped_data, 'test_json_export')
+    scraper._convert_scraped_results_to_json_file(mock_scraped_data, 'test_json_export')
     assert 'test_json_export.json' in os.listdir()
     file = open('test_json_export.json', 'r')
     content = file.read()
@@ -55,7 +59,7 @@ def test_convert_to_json(mock_scraped_data):
 def test_convert_to_csv(mock_scraped_data):
     scraper = Scraper()
     assert not any(['csv' in filename for filename in os.listdir()])
-    scraper.convert_scraped_results_to_csv_file(mock_scraped_data, 'test_csv_export')
+    scraper._convert_scraped_results_to_csv_file(mock_scraped_data, 'test_csv_export')
     assert 'test_csv_export.csv' in os.listdir()
     file = open('test_csv_export.csv', 'r')
     content = file.read()
@@ -72,9 +76,16 @@ def test_convert_to_csv(mock_scraped_data):
 
 def test_convert_to_dataframe(mock_scraped_data):
     scraper = Scraper()
-    df = scraper.convert_scraped_results_to_dataframe(mock_scraped_data)
+    df = scraper._convert_scraped_results_to_dataframe(mock_scraped_data)
     assert type(df) == pd.core.frame.DataFrame
     assert df.shape == (3, 7), 'Dataframe should have 3 rows and 7 columns.'
     assert all(col in df.columns for col in [
         'city', 'country', 'state', 'continent', 'description', 'top_3_attractions', 'image'
     ]), 'Dataframe has missing columns.'
+
+
+def test_invalid_conversion_to_dataframe(mock_invalid_data):
+    scraper = Scraper()
+    for data in mock_invalid_data:
+        with pytest.raises(TypeError, match=r'Data must be a valid list of dictionaries.'):
+            scraper._convert_scraped_results_to_dataframe(data)

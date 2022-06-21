@@ -202,14 +202,21 @@ class Scraper:
 
             return self.series_urls_to_scrape
 
-    def convert_scraped_results_to_json_file(self, data: List[dict], file_name: str):
+    @staticmethod
+    def _convert_scraped_results_to_json_file(data: List[dict], file_name: str):
         with open(f"{file_name}.json", "w") as outfile:
             json.dump(data, outfile)
 
-    def convert_scraped_results_to_dataframe(self, data: List[dict]) -> pd.DataFrame:
-        return pd.DataFrame(data)
+    @staticmethod
+    def _convert_scraped_results_to_dataframe(data: List[dict]) -> pd.DataFrame:
+        if type(data) == list and len(data) >= 1 and type(data[0]) == dict \
+                and len(data[0].keys()) >= 7:
+            return pd.DataFrame(data)
+        else:
+            raise TypeError('Data must be a valid list of dictionaries.')
 
-    def convert_scraped_results_to_csv_file(self, data: List[dict], file_name: str):
+    @staticmethod
+    def _convert_scraped_results_to_csv_file(data: List[dict], file_name: str):
         keys = data[0].keys()  # extract keys as csv header
 
         with open(f"{file_name}.csv", 'w', newline='') as output_file:
