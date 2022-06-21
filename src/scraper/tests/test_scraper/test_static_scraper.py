@@ -133,3 +133,29 @@ def test_static_lonely_planet(mock_destinations_urls):
     assert all(place in city_names for place in [
         'Gili Islands', 'Lagos', 'Mykonos', 'Cairo'
     ]), 'Not all destinations successfully scraped.'
+
+
+def test_lonely_planet_invalid_scraper_url(invalid_scraper_url, capsys):
+    scraper = Scraper()
+    try:
+        scraper.scrape_lonely_planet_cities(invalid_scraper_url)
+        captured = capsys.readouterr()
+        expected_error = '1/1: https://www.github.com\nError "list index out of'\
+                         ' range" for the URL https://www.github.com\n'
+        assert captured.out == expected_error
+        assert captured.err == ''
+    except Exception as err:
+        raise pytest.fail(f'DID RAISE {err}')
+
+
+def test_lonely_planet_broken_url(invalid_url, capsys):
+    scraper = Scraper()
+    try:
+        scraper.scrape_lonely_planet_cities(invalid_url)
+        out, err = capsys.readouterr()
+        for error in ['HTTPSConnectionPool', 'port=443', 'Max retries exceeded',
+                      'Caused by NewConnectionError']:
+            assert error in out, f'Error DOES NOT contain "{error}"'
+        assert err == ''
+    except Exception as err:
+        raise pytest.fail(f'DID RAISE {err}')
