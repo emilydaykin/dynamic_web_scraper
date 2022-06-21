@@ -204,8 +204,12 @@ class Scraper:
 
     @staticmethod
     def _convert_scraped_results_to_json_file(data: List[dict], file_name: str):
-        with open(f"{file_name}.json", "w") as outfile:
-            json.dump(data, outfile)
+        if type(data) == list and len(data) >= 1 and type(data[0]) == dict \
+                and len(data[0].keys()) >= 7:
+            with open(f"{file_name}.json", "w") as outfile:
+                json.dump(data, outfile)
+        else:
+            raise TypeError('Data must be a valid list of dictionaries.')
 
     @staticmethod
     def _convert_scraped_results_to_dataframe(data: List[dict]) -> pd.DataFrame:
@@ -217,12 +221,17 @@ class Scraper:
 
     @staticmethod
     def _convert_scraped_results_to_csv_file(data: List[dict], file_name: str):
-        keys = data[0].keys()  # extract keys as csv header
+        if type(data) == list and len(data) >= 1 and type(data[0]) == dict \
+                and len(data[0].keys()) >= 7:
+            keys = data[0].keys()  # extract keys as csv header
 
-        with open(f"{file_name}.csv", 'w', newline='') as output_file:
-            dict_writer = csv.DictWriter(output_file, keys)
-            dict_writer.writeheader()
-            dict_writer.writerows(data)
+            with open(f"{file_name}.csv", 'w', newline='') as output_file:
+                dict_writer = csv.DictWriter(output_file, keys)
+                dict_writer.writeheader()
+                dict_writer.writerows(data)
+
+        else:
+            raise TypeError('Data must be a valid list of dictionaries.')
 
 
 if __name__ == '__main__':
