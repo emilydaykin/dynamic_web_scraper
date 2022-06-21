@@ -28,6 +28,20 @@ def mock_destinations_urls():
     ]
 
 
+@pytest.fixture
+def invalid_scraper_url():
+    return [
+        'https://www.github.com'
+    ]
+
+
+@pytest.fixture
+def invalid_url():
+    return [
+        'https://www.jhdsfjgsadjfgjsahdgfkjashdf.com/'
+    ]
+
+
 def test_static_imdb(mock_series_urls):
     scraper = Scraper()
     series = scraper.scrape_imdb_series(mock_series_urls)
@@ -73,6 +87,32 @@ def test_imdb_year_split(mock_years_data):
             assert pilot_year == '2019'
             assert not finale_year.isnumeric(), "Series second year from split is a number."
             assert finale_year == '', "Series second year from split should be an empty string."
+
+
+def test_imdb_invalid_scraper_url(invalid_scraper_url, capsys):
+    scraper = Scraper()
+    try:
+        scraper.scrape_imdb_series(invalid_scraper_url)
+        captured = capsys.readouterr()
+        expected_error = '1/1: Scraping https://www.github.com...\nError "list index out of'\
+                         ' range" for the URL https://www.github.com\n'
+        assert captured.out == expected_error
+        assert captured.err == ''
+    except Exception as err:
+        raise pytest.fail(f'DID RAISE {err}')
+
+
+def test_imdb_broken_url(invalid_url, capsys):
+    scraper = Scraper()
+    try:
+        scraper.scrape_imdb_series(invalid_url)
+        out, err = capsys.readouterr()
+        for error in ['HTTPSConnectionPool', 'port=443', 'Max retries exceeded',
+                      'Caused by NewConnectionError']:
+            assert error in out, f'Error DOES NOT contain "{error}"'
+        assert err == ''
+    except Exception as err:
+        raise pytest.fail(f'DID RAISE {err}')
 
 
 def test_static_lonely_planet(mock_destinations_urls):
