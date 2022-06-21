@@ -19,6 +19,11 @@ def mock_years_data():
 
 
 @pytest.fixture
+def mock_invalid_years_data():
+    return ['2013–test', '2021hello–2023', '2021hello–', 'invalid']
+
+
+@pytest.fixture
 def mock_destinations_urls():
     return [
         'https://www.lonelyplanet.com/indonesia/nusa-tenggara/gili-islands',
@@ -43,6 +48,7 @@ def invalid_url():
 
 
 def test_static_imdb(mock_series_urls):
+    """ Test that the IMDb static scraper returns expected results. """
     scraper = Scraper()
     series = scraper.scrape_imdb_series(mock_series_urls)
     assert type(series) == list
@@ -69,7 +75,7 @@ def test_static_imdb(mock_series_urls):
 
 
 def test_imdb_year_split(mock_years_data):
-    """Testing helper function"""
+    """ Testing helper function returns expected results. """
     scraper = Scraper()
 
     for mock_years in mock_years_data:
@@ -89,7 +95,18 @@ def test_imdb_year_split(mock_years_data):
             assert finale_year == '', "Series second year from split should be an empty string."
 
 
+def test_imdb_year_split_error(mock_invalid_years_data):
+    """ Testing helper function raises errors. """
+    scraper = Scraper()
+    for mock_years in mock_invalid_years_data:
+        with pytest.raises(ValueError, match=f'{mock_years} is not a valid time period.'):
+            scraper._extract_years(mock_years)
+
+
 def test_imdb_invalid_scraper_url(invalid_scraper_url, capsys):
+    """ Test that the IMDb scraper returns the correct error via
+        the `except` block when a non-IMDb link is passed as an argument.
+    """
     scraper = Scraper()
     try:
         scraper.scrape_imdb_series(invalid_scraper_url)
@@ -103,6 +120,9 @@ def test_imdb_invalid_scraper_url(invalid_scraper_url, capsys):
 
 
 def test_imdb_broken_url(invalid_url, capsys):
+    """ Test that the IMDb scraper returns the correct error via
+        the `except` block when a broken URL link is passed as an argument.
+    """
     scraper = Scraper()
     try:
         scraper.scrape_imdb_series(invalid_url)
@@ -116,6 +136,7 @@ def test_imdb_broken_url(invalid_url, capsys):
 
 
 def test_static_lonely_planet(mock_destinations_urls):
+    """ Test that the Lonely Planet static scraper returns expected results. """
     scraper = Scraper()
     destinations = scraper.scrape_lonely_planet_cities(mock_destinations_urls)
     assert type(destinations) == list
@@ -136,6 +157,9 @@ def test_static_lonely_planet(mock_destinations_urls):
 
 
 def test_lonely_planet_invalid_scraper_url(invalid_scraper_url, capsys):
+    """ Test that the Lonely Planet scraper returns the correct error via
+        the `except` block when a non-Lonely Planet link is passed as an argument.
+    """
     scraper = Scraper()
     try:
         scraper.scrape_lonely_planet_cities(invalid_scraper_url)
@@ -149,6 +173,9 @@ def test_lonely_planet_invalid_scraper_url(invalid_scraper_url, capsys):
 
 
 def test_lonely_planet_broken_url(invalid_url, capsys):
+    """ Test that the Lonely Planet scraper returns the correct error via
+        the `except` block when a broken URL link is passed as an argument.
+    """
     scraper = Scraper()
     try:
         scraper.scrape_lonely_planet_cities(invalid_url)
