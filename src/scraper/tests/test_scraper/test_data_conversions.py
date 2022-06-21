@@ -44,6 +44,7 @@ def mock_scraped_data():
 
 
 def test_convert_to_json(mock_scraped_data):
+    """ Testing data export to a JSON file. """
     scraper = Scraper()
     assert not any(['json' in filename for filename in os.listdir()])
     scraper._convert_scraped_results_to_json_file(mock_scraped_data, 'test_json_export')
@@ -59,6 +60,7 @@ def test_convert_to_json(mock_scraped_data):
 
 
 def test_convert_to_csv(mock_scraped_data):
+    """ Testing data export to a CSV file. """
     scraper = Scraper()
     assert not any(['csv' in filename for filename in os.listdir()])
     scraper._convert_scraped_results_to_csv_file(mock_scraped_data, 'test_csv_export')
@@ -76,6 +78,7 @@ def test_convert_to_csv(mock_scraped_data):
 
 
 def test_convert_to_dataframe(mock_scraped_data):
+    """ Testing data conversion to a pandas dataframe. """
     scraper = Scraper()
     df = scraper._convert_scraped_results_to_dataframe(mock_scraped_data)
     # assert type(df) == pd.core.frame.DataFrame
@@ -87,6 +90,9 @@ def test_convert_to_dataframe(mock_scraped_data):
 
 
 def test_invalid_data_conversions(mock_invalid_data):
+    """ Testing errors raised when invalid data exported/converted to a
+        JSON or CSV file, or pandas dataframe.
+    """
     scraper = Scraper()
 
     for data in mock_invalid_data:

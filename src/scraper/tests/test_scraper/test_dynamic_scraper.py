@@ -19,6 +19,7 @@ def invalid_search_term():
 
 
 def test_dynamic_imdb_search(mock_imdb_search_term):
+    """ Test that the IMDb dynamic scraper returns expected results. """
     scraper = Scraper()
     results = scraper.scrape_imdb_search(mock_imdb_search_term)
     assert type(results) == list, 'Results should be a list'
@@ -38,6 +39,9 @@ def test_dynamic_imdb_search(mock_imdb_search_term):
 
 
 def test_imdb_invalid_search(invalid_search_term):
+    """ Test that the IMDb dynamic scraper returns expected results with
+        an invalid search term.
+    """
     scraper = Scraper()
     try:
         results = scraper.scrape_imdb_search(invalid_search_term)
@@ -49,6 +53,7 @@ def test_imdb_invalid_search(invalid_search_term):
 
 
 def test_dynamic_lonely_planet_search(mock_lonely_planet_search_term):
+    """ Test that the Lonely Planet dynamic scraper returns expected results. """
     scraper = Scraper()
     results = scraper.scrape_lonely_planet_search(*mock_lonely_planet_search_term)
     assert type(results) == list
@@ -70,6 +75,9 @@ def test_dynamic_lonely_planet_search(mock_lonely_planet_search_term):
 
 
 def test_lonely_planet_invalid_search(invalid_search_term):
+    """ Test that the Lonely Planet dynamic scraper returns expected
+        results with an invalid search term.
+    """
     scraper = Scraper()
     try:
         results = scraper.scrape_lonely_planet_search(invalid_search_term, '')
