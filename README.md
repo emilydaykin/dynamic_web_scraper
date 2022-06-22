@@ -26,10 +26,11 @@ The idea behind the dynamic scraper is that, through a UI and using the Lonely P
 
 ## Installation
 1. Clone this repo 
-2. Run tests: Run `pytest` in the root directory
-3. Run the scraper: Run `python src/runners/<file_name>.py` in the root directory
+2. Run tests: Run `pytest` in the root directory (install `pytest` if necessary)
+3. Run the scraper by calling `python src/runners/<file_name>.py` in the root directory:
     - `python src/runners/imdb.py`, or
     - `python src/runners/lonely_planet.py`
+4. Change any of the runner files if necessary to experiment with the scrapers
 
 #### ⚠️ Note:
 - IMDb and Lonely Planet may change their HTML class names or ids. The tag names in this package are correct as of 22/06/2022.
