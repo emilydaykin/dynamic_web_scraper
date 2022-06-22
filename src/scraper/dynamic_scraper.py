@@ -129,8 +129,11 @@ class Scraper:
         assert len(years_split) <= 2, '`Years` was not split correctly'
         assert len(years_split) > 0, '`Years` was not split correctly'
         pilot_year = years_split[0]
-        finale_year = 'ongoing' if len(years_split) == 1 else years_split[1]
-        return pilot_year, finale_year
+        finale_year = 'ongoing' if (len(years_split) == 1 or years_split[1] == ' ') else years_split[1]
+        if pilot_year.isnumeric() and (finale_year.isnumeric() or finale_year in ['ongoing', '']):
+            return pilot_year, finale_year
+        else:
+            raise ValueError(f'{years} is not a valid time period.')
 
     def scrape_imdb_series(self, urls: List[str] = URLs_imdb) -> List[dict]:
         """ Method that statically scrapes a given list of IMDB pages for TV series
