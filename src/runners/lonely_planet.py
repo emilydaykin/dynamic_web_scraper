@@ -32,11 +32,11 @@ keyword_results = scraper.scrape_lonely_planet_search(keyword, keyword_to_search
 # print(f'keyword_results: {keyword_results}')
 
 # Export cities dictionary into json file:
-scraper.convert_scraped_results_to_json_file(cities, 'cities_EXPORT')
+scraper._convert_scraped_results_to_json_file(cities, 'cities_EXPORT')
 
 # Export cities dictionary into csv file:
-scraper.convert_scraped_results_to_csv_file(cities, 'cities_EXPORT_csv')
+scraper._convert_scraped_results_to_csv_file(cities, 'cities_EXPORT_csv')
 
 # Convert cities dictionary into dataframe:
-cities_df = scraper.convert_scraped_results_to_dataframe(cities)
+cities_df = scraper._convert_scraped_results_to_dataframe(cities)
 # print(cities_df)
