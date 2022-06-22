@@ -44,7 +44,10 @@ class Scraper:
 
                 # Continent & Country:
                 location = soup.find_all(
-                    'a', class_='transition-colors ease-out cursor-pointer text-black hover:text-blue link-underline')
+                    # 'a', class_='transition-colors ease-out cursor-pointer text-black hover:text-blue '
+                    #             'link-underline')  # april 2022
+                    'a', class_='transition-colors ease-out cursor-pointer text-black hover:text-blue ' \
+                                'link-underline')  # june 2022
                 continent = location[0].text
                 country = location[1].text
                 # State or communidad. The US will be populated with states for example, Spain with communidades
@@ -83,7 +86,7 @@ class Scraper:
     def scrape_lonely_planet_search(self, city_name: str, country_name: str) -> List[str]:
         """ Method that dynamically scrapes the search results page of Lonely Planet
             given a search term. The results are then matched to the country_name
-            arg to narrow down to the relevant search results
+            arg to narrow down to the relevant search results.
 
             Returns a list of Lonely Planet URLs corresponding to the relevant search results.
         """
@@ -129,7 +132,8 @@ class Scraper:
         assert len(years_split) <= 2, '`Years` was not split correctly'
         assert len(years_split) > 0, '`Years` was not split correctly'
         pilot_year = years_split[0]
-        finale_year = 'ongoing' if (len(years_split) == 1 or years_split[1] == ' ') else years_split[1]
+        finale_year = 'ongoing' if (
+            len(years_split) == 1 or years_split[1] == ' ') else years_split[1]
         if pilot_year.isnumeric() and (finale_year.isnumeric() or finale_year in ['ongoing', '']):
             return pilot_year, finale_year
         else:
@@ -148,21 +152,26 @@ class Scraper:
                 page = requests.get(url)
                 soup = BeautifulSoup(page.content, 'html.parser')
 
-                title = soup.find_all('h1', {'data-testid': 'hero-title-block__title'})[0].text
+                title = soup.find_all(
+                    'h1', {'data-testid': 'hero-title-block__title'})[0].text
                 # years = soup.find_all('span', class_='sc-52284603-2 iTRONr')[0].text  # april 2022
-                years = soup.find_all('span', class_='sc-8c396aa2-2 itZqyK')[0].text  # june 2022
+                years = soup.find_all(
+                    'span', class_='sc-8c396aa2-2 itZqyK')[0].text  # june 2022
                 poster = soup.find('img', class_='ipc-image')['src']
                 genres_elements = soup.find_all(
                     'a', class_='sc-16ede01-3 bYNgQ ipc-chip ipc-chip--on-baseAlt')
                 genres = [genre.text for genre in genres_elements]
-                description = soup.find_all('span', class_='sc-16ede01-1 kgphFu')[0].text
-                rating = soup.find_all('span', class_='sc-7ab21ed2-1 jGRxWM')[0].text
+                description = soup.find_all(
+                    'span', class_='sc-16ede01-1 kgphFu')[0].text
+                rating = soup.find_all(
+                    'span', class_='sc-7ab21ed2-1 jGRxWM')[0].text
                 # top_3_actor_elements = soup.find_all('a', class_='sc-11eed019-1 jFeBIw')[:3]  # april 2022
                 top_3_actor_elements = soup.find_all('a', class_='ipc-metadata-list-item__list-content-item ipc-'
                                                                  'metadata-list-item__list-content-item'
                                                                  '--link')[:3]  # june 2022
                 top_3_actors = [actor.text for actor in top_3_actor_elements]
-                number_of_episodes = soup.find_all('span', class_='ipc-title__subtext')[0].text
+                number_of_episodes = soup.find_all(
+                    'span', class_='ipc-title__subtext')[0].text
                 language = soup.find_all('a', class_='ipc-metadata-list-item__list-content-item '
                                                      'ipc-metadata-list-item__list-content-item--link')[-7].text
 
@@ -207,7 +216,9 @@ class Scraper:
         imdb_search_results = soup.find_all('td', class_='result_text')
 
         # Ignore Names, Keywords and Companies on results page. Get only Title:
-        series_search_results = [result for result in imdb_search_results if 'title' in result.a['href']]
+        series_search_results = [
+            result for result in imdb_search_results if 'title' in result.a['href']
+        ]
 
         if len(series_search_results) == 0:
             return ['']
