@@ -218,9 +218,11 @@ def test_dynamic_imdb_search(mock_imdb_search_term):
     scraped_series_page = scraper.scrape_imdb_series([results[0]])
     assert type(scraped_series_page) == list
     assert len(scraped_series_page) == 1
-    assert all(key in scraped_series_page[0].keys() for key in [
+    expected_keys = [
         'name', 'genre', 'description', 'actors', 'pilotYear', 'finaleYear', 'rating', 'image'
-    ]), 'Key(s) missing.'
+    ]
+    assert all(key in scraped_series_page[0].keys()
+               for key in expected_keys), 'Key(s) missing.'
     assert scraped_series_page[0]['name'] == 'Game of Thrones'  # UK vpn (or else spanish title)
     assert scraped_series_page[0]['genre'] == ['Action', 'Adventure', 'Drama']
     assert len(scraped_series_page[0]['actors']) == 3

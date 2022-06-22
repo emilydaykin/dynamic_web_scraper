@@ -55,10 +55,11 @@ def test_static_imdb(mock_series_urls):
     assert len(series) == 3
 
     series_titles = []
+    expected_keys = [
+        'name', 'genre', 'description', 'actors', 'pilotYear', 'finaleYear', 'rating', 'image'
+    ]
     for show in series:
-        assert all(key in show.keys() for key in [
-            'name', 'genre', 'description', 'actors', 'pilotYear', 'finaleYear', 'rating', 'image'
-        ]), 'Key(s) missing.'
+        assert all(key in show.keys() for key in expected_keys), 'Key(s) missing.'
         series_titles.append(show['name'])
         for key in ['name', 'description']:
             assert type(show[key]) == str, f'Series {key} is not a string.'
